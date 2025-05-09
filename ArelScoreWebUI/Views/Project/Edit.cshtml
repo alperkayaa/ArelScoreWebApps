@@ -1,0 +1,76 @@
+﻿@model ArelScoreWebUI.Models.ViewModel.ProjectEditViewModel
+
+@{
+    ViewData["Title"] = "Proje Güncelle";
+}
+
+<form asp-action="Edit" asp-controller="Project" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <input type="hidden" name="Image" />
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Projenin Adı:</label>
+        <input asp-for="Name" class="form-control" required />
+        <div class="invalid-feedback">Proje adı gereklidir.</div>
+    </div>
+
+    <div class="mb-3">
+        
+        <label asp-for="Description" class="form-label">Proje Açıklaması:</label>
+        <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+        <div class="invalid-feedback">Açıklama gereklidir.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SiteLink" class="form-label">Projenin Sitesi:</label>
+        <input asp-for="SiteLink" class="form-control" placeholder="https://..."/>
+    </div>
+
+    <div class="mb-3">
+        
+        <label asp-for="YoutubeLink" class="form-label">Youtube Linki:</label>
+        <input asp-for="YoutubeLink" class="form-control" type="url" placeholder="https://youtube.com/..." />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Proje Grup Numarası :</label>
+        <input asp-for="GroupNo" class="form-control" required />
+        <div class="invalid-feedback">Grup numarası gereklidir.</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Mevcut Resim</label><br />
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-thumbnail mb-2" style="height: 100px;" />
+        }
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">Yeni Resim Yükle :</label>
+        <input asp-for="Image" type="file" accept="image/*" />
+        <span asp-validation-for="Image" style="color:red;"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Projeyi Güncelle</button>
+</form>
+
+@section Scripts {
+    <script>
+        // Bootstrap form validation
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}
+

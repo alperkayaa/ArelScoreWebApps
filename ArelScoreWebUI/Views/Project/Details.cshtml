@@ -1,0 +1,178 @@
+﻿@model ArelScoreWebUI.Models.ViewModel.ProjectVoteResultViewModel
+
+@{
+    ViewData["Title"] = "Proje Detayları";
+}
+
+@section Css {
+    <style>
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .project-logo {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .stars {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .star {
+            font-size: 30px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+            .star:hover {
+                color: gold;
+            }
+    </style>
+}
+
+<div class="container my-5">
+    <div class="project-header mb-4">
+        <img src="@Model.ImageUrl" alt="Proje Logosu" class="project-logo" />
+        <div>
+            <h2>@Model.Name</h2>
+            <p><strong>Yüklenme Tarihi:</strong> @Model.UploadDate.ToString("dd MMM yyyy HH:mm")</p>
+            <p><strong>Proje Sahibi:</strong> @Model.OwnerName</p>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h4>Açıklama</h4>
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="mb-4">
+        <h4>Grup Numarası</h4>
+        <p>@Model.GroupNo</p>
+    </div>
+
+    <div class="mb-4">
+        <h4>Proje Website Adresi</h4>
+        <p>
+            <a href="@Model.SiteLink" target="_blank" rel="noopener noreferrer">
+                Proje Sitesine Gitmek İçin Tıklayınız...
+            </a>
+        </p>
+    </div>
+
+    @{
+        string youtubeEmbedLink = string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(Model.YoutubeLink))
+        {
+            string url = Model.YoutubeLink;
+
+            // Gereksiz parametreleri kaldır (örneğin ?si=..., ?gl=... vs.)
+            var cleanUrl = url.Split('?')[0];
+
+            string videoId = string.Empty;
+
+            // www.youtube.com/watch?v=ID
+            if (cleanUrl.Contains("watch?v="))
+            {
+                videoId = cleanUrl.Split("watch?v=")[1];
+            }
+            // youtu.be/ID
+            else if (cleanUrl.Contains("youtu.be/"))
+            {
+                videoId = cleanUrl.Split("youtu.be/")[1];
+            }
+            // youtube.com/watch/ID
+            else if (cleanUrl.Contains("youtube.com/watch/"))
+            {
+                videoId = cleanUrl.Split("youtube.com/watch/")[1];
+            }
+            // youtube.com/embed/ID zaten embed ise direkt kullan
+            else if (cleanUrl.Contains("youtube.com/embed/"))
+            {
+                youtubeEmbedLink = url;
+            }
+
+            // Eğer videoId bulunduysa embed linki oluştur
+            if (!string.IsNullOrEmpty(videoId))
+            {
+                youtubeEmbedLink = $"https://www.youtube.com/embed/{videoId}";
+            }
+        }
+    }
+    @if (!string.IsNullOrWhiteSpace(youtubeEmbedLink))
+    {
+        <div class="mb-4">
+            <h4>Tanıtım Videosu</h4>
+            <iframe style="width:100%; height:300px"
+                    src="@youtubeEmbedLink"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    }
+    else
+    {
+        <p><em>Video bağlantısı geçersiz ya da desteklenmeyen bir formatta.</em></p>
+    }
+
+    <div class="mb-4">
+        <h5>Toplam Oy: @Model.TotalVotes</h5>
+        <h5>Ortalama Puan: @Model.AverageRating.ToString("0.0")</h5>
+    </div>
+
+    <!-- ⭐ Oy Verme Formu -->
+    <form id="voteForm" asp-controller="Vote" asp-action="Vote" method="post">
+        <input type="hidden" name="projectId" value="@Model.ProjectId" />
+        <input type="hidden" name="rating" id="rating" value="@Model.UserRating" />
+
+        <label for="rating">Oy Ver:</label>
+        <div class="stars" id="stars">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <span class="star" data-value="@i">@((i <= Model.UserRating) ? "★" : "☆")</span>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Oyu Gönder</button>
+    </form>
+
+    @if (Model.UserRating > 0)
+    {
+        <p class="mt-2">Mevcut Oyunuz: <strong>@Model.UserRating</strong></p>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var userRating = @Model.UserRating;
+
+            $('.star').hover(function () {
+                highlightStars($(this).data('value'));
+            }, function () {
+                highlightStars(userRating);
+            });
+
+            $('.star').click(function () {
+                userRating = $(this).data('value');
+                $('#rating').val(userRating);
+                highlightStars(userRating);
+            });
+
+            function highlightStars(value) {
+                $('.star').each(function () {
+                    var starValue = $(this).data('value');
+                    $(this).text(starValue <= value ? '★' : '☆').css('color', starValue <= value ? 'gold' : 'gray');
+                });
+            }
+        });
+    </script>
+}

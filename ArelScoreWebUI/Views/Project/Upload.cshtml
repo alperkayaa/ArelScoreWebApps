@@ -1,0 +1,167 @@
+﻿@model ArelScoreWebUI.Models.ViewModel.ProjectUploadViewModel
+
+@{
+    ViewData["Title"] = "Proje Yükle";
+}
+
+@section Css {
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4f9dfc, #6b77f5);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin: 40px auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 26px;
+            color: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 600;
+                color: #e2e8f0;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                width: 100%;
+                padding: 12px 14px;
+                border: none;
+                border-radius: 10px;
+                font-size: 15px;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+            }
+
+                .form-group input:focus,
+                .form-group textarea:focus {
+                    outline: none;
+                    background: rgba(255, 255, 255, 0.3);
+                    box-shadow: 0 0 0 2px #60a5fa;
+                }
+
+            .form-group textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
+
+        .submit-btn {
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            padding: 14px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+            .submit-btn:hover {
+                background: #1d4ed8;
+                transform: scale(1.02);
+            }
+
+        .note {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        ::placeholder {
+            color: #cbd5e1;
+        }
+
+        .success-message {
+            color: lightgreen;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+}
+
+<div class="form-container">
+    <h2>📁 Proje Yükle</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="success-message">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form asp-action="Upload" asp-controller="Project" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="Title">Projenin Adı:</label>
+            <input asp-for="Name" placeholder="Projenin adını yazınız" />
+            <span asp-validation-for="Name" style="color:red;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Site">Projenin Web Sitesi:</label>
+            <input asp-for="SiteLink" placeholder="İnternet sitesi adresini giriniz" />
+            <span asp-validation-for="SiteLink" style="color:red;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Video">Projenin YouTube Linki:</label>
+            <input asp-for="YoutubeLink" placeholder="YouTube bağlantısını yazınız" />
+            <span asp-validation-for="YoutubeLink" style="color:red;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Image">Projenin Logosu:</label>
+            <input asp-for="ImageUrl" type="file" accept="image/*" />
+            <span asp-validation-for="ImageUrl" style="color:red;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Description">Projenin Açıklaması:</label>
+            <textarea asp-for="Description" placeholder="Projeniz hakkında bilgi veriniz"></textarea>
+            <span asp-validation-for="Description" style="color:red;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="GropuNo"> Proje Grup No:</label>
+            <input asp-for="GroupNo" placeholder="Grup numaranızı giriniz" />
+            <span asp-validation-for="GroupNo" style="color:red;"></span>
+        </div>
+
+        <button type="submit" class="submit-btn">Projeyi Yükle</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

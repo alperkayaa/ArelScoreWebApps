@@ -1,0 +1,75 @@
+﻿@model ArelScoreWebUI.Models.ViewModel.ProjectListViewModel
+
+@{
+    ViewData["Title"] = "Yüklediğim Projeler";
+}
+
+@section Css {
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Projelerim</h2>
+    <table id="projectTable" class="display table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Proje Adı</th>
+                <th>Oy (1–5)</th>
+                <th>Toplam Oy</th>
+                <th>Ortalama</th>
+                <th>Proje Sahibi</th>
+                <th>Düzenle</th>
+                <th>Sil</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Projects.Count; i++)
+            {
+                var project = Model.Projects[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@project.Name</td>
+                    <td>
+                        @{
+                            int rating = (int)Math.Round(project.Average);
+                            string stars = new string('⭐', rating);
+                        }
+                        @stars
+                    </td>
+                    <td>@project.TotalVotes</td>
+                    <td>@project.Average.ToString("0.0")</td>
+                    <td>@project.OwnerName</td>
+                    <td>
+                        <a href="/Project/Edit/@project.Id" class="btn btn-sm btn-primary">Düzenle</a>
+                    </td>
+                    <td>
+                    <form asp-action="Delete" asp-controller="Project" method="post" onsubmit="return confirm('Bu projeyi silmek istediğinize emin misiniz?');">
+                        <input type="hidden" name="id" value="@project.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                    </form>
+                </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#projectTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json'
+                }
+            });
+        });
+    </script>
+}

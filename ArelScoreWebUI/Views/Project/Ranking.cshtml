@@ -1,0 +1,93 @@
+﻿@model ArelScoreWebUI.Models.ViewModel.ProjectListViewModel
+
+@{
+    ViewData["Title"] = "Proje Sıralaması";
+}
+
+@section Css {
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+   
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <style>
+        /* Tablonun köşelerini yumuşat */
+        #projectTable {
+            border-radius: 12px !important;
+            overflow: hidden;
+        }
+
+        /* Tablonun içeriğinin taşmaması için tbody'ye de overflow gizle */
+        #projectTable tbody tr {
+            border-radius: 8px;
+        }
+    </style>
+}
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Proje Sıralaması</h2>
+    <table id="projectTable" class="display table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Proje Adı</th>
+                <th>Grup No</th>
+                <th>Oy (1–5)</th>
+                <th>Toplam Oy</th>
+                <th>Ortalama</th>
+                <th>Proje Sahibi</th>
+                <th>Görüntüle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Projects.Count; i++)
+            {
+                var project = Model.Projects[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@project.Name</td>
+                    <td>@project.GroupNo</td>
+                    <td>
+                        @{
+                            int rating = (int)Math.Round(project.Average);
+                            string stars = new string('⭐', rating);
+                        }
+                        @stars
+                    </td>
+                    <td>@project.TotalVotes</td>
+                    <td>@project.Average.ToString("0.0")</td>
+                    <td>@project.OwnerName</td>
+                    <td>
+                        <a href="/Project/Details/@project.Id" class="btn btn-sm btn-primary">Görüntüle</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#projectTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json'
+                }
+            });
+        });
+
+        setTimeout(function () {
+            location.reload();
+        }, 60000); // 60000 milisaniye = 60 saniye
+
+    </script>
+}
